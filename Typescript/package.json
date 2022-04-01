@@ -1,14 +1,14 @@
 {
-  "name": "typescript-kata-boilerplate",
+  "name": "Cake Shop Kata",
   "version": "1.0.0",
-  "description": "Quick boilerplate for writing TDD katas",
+  "description": "A TDD Kata for Domain Modelling",
   "main": "index.js",
   "scripts": {
     "lint": "eslint --fix 'src/**/*.{ts,tsx}'",
     "test": "jest"
   },
-  "author": "bob.gregory@cazoo.co.uk",
-  "license": "MIT",
+  "author": "bob@codefiend.co.uk",
+  "license": "CC0",
   "devDependencies": {
     "@cazoo/eslint-plugin-eslint": "^1.0.2",
     "@types/jest": "^27.4.0",
