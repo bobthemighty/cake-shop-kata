@@ -89,3 +89,9 @@ test("An order for a small cake with frosting, in a fancy box, placed on Tuesday
     )
   ).toBeDeliveredOn(following(Monday));
 });
+
+test("An order for a small cake with a fancy box, placed on Monday morning, has a delivery date of Wednesday", () => {
+  expect(
+    orderCake({ size: "small", with: ["box"] }, morning(Monday))
+  ).toBeDeliveredOn(Wednesday);
+});

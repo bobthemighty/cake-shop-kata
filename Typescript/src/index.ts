@@ -18,8 +18,11 @@ const isMorning = (d: PlainDateTime) => d.hour < 12;
 
 const isFrostingDay = (d: PlainDateTime) =>
   ![SUNDAY, MONDAY].includes(d.dayOfWeek);
+
 const isBakingDay = (d: PlainDateTime) =>
   ![SATURDAY, SUNDAY].includes(d.dayOfWeek);
+
+const everyDay = () => true;
 
 function doIt(
   leadTime: (c: CakeRequirements) => number,
@@ -36,6 +39,8 @@ function doIt(
   };
 }
 
+const boxIt = doIt((c) => (c.with?.includes("box") ? 2 : 0), everyDay);
+
 const bakeIt = doIt((c) => (c.size === "small" ? 1 : 2), isBakingDay);
 
 const frostIt = doIt(
@@ -50,6 +55,12 @@ export function orderCake(
   orderTime: PlainDateTime
 ): PlainDate {
   const startDay = isMorning(orderTime) ? orderTime : nextDay(orderTime);
+  const bakedDate = addNuts(
+    order,
+    frostIt(order, bakeIt(order, startDay))
+  ).toPlainDate();
+  const boxArrival = boxIt(order, orderTime).toPlainDate();
 
-  return addNuts(order, frostIt(order, bakeIt(order, startDay))).toPlainDate();
+  if (PlainDateTime.compare(bakedDate, boxArrival) == -1) return boxArrival;
+  return bakedDate;
 }
