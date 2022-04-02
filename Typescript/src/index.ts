@@ -3,8 +3,7 @@ import { PlainDateTime } from "temporal-polyfill";
 type Size = "small" | "big";
 
 export function orderCake(size: Size, orderTime: PlainDateTime) {
-  let leadTime = 2;
-  if (size === "big") leadTime++;
-  if (orderTime.hour < 12) leadTime--;
-  return orderTime.add({ days: leadTime }).toPlainDate();
+  const leadTime = size === "small" ? 1 : 2;
+  const startDay = orderTime.hour < 12 ? orderTime : orderTime.add({ days: 1 });
+  return startDay.add({ days: leadTime });
 }
