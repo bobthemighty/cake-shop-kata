@@ -11,6 +11,8 @@ export interface CakeRequirements {
   with?: Array<Extra>;
 }
 
+const nextDay = (d: PlainDateTime) => d.add({ days: 1 });
+
 const isMorning = (d: PlainDateTime) => d.hour < 12;
 
 const isWeekend = (d: PlainDateTime) =>
@@ -27,8 +29,11 @@ export function orderCake(
   let leadTime = order.size === "small" ? 1 : 2;
   if (order.with?.includes("frosting")) leadTime += 2;
 
-  let deliveryDay = startDay.add({ days: leadTime });
-  while (isWeekend(deliveryDay)) deliveryDay = deliveryDay.add({ days: 1 });
+  let deliveryDay = startDay;
+  while (leadTime > 0) {
+    deliveryDay = nextDay(deliveryDay);
+    if (!isWeekend(deliveryDay)) leadTime--;
+  }
 
   return deliveryDay.toPlainDate();
 }
