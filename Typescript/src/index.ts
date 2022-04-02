@@ -22,9 +22,7 @@ export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
-  const startDay = isMorning(orderTime)
-    ? orderTime
-    : orderTime.add({ days: 1 });
+  const startDay = isMorning(orderTime) ? orderTime : nextDay(orderTime);
 
   let leadTime = order.size === "small" ? 1 : 2;
   if (order.with?.includes("frosting")) leadTime += 2;

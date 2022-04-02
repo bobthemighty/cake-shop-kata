@@ -64,3 +64,9 @@ test("A big cake, ordered on Thursday morning, is delivered on Monday", () => {
   const result = orderCake({ size: "big" }, morning(Thursday));
   expect(result).toBeDeliveredOn(NextMonday);
 });
+
+xtest("A big cake with custom frosting, ordered on Tuesday afternoon, is delivered Wednesday", () => {
+  expect(
+    orderCake({ size: "big", with: ["frosting"] }, afternoon(Tuesday))
+  ).toBeDeliveredOn(NextWednesday);
+});
