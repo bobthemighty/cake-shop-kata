@@ -29,13 +29,13 @@ function doIt(
   isWorkingDay: (d: PlainDateTime) => boolean
 ): (cake: CakeRequirements, start: PlainDateTime) => PlainDateTime {
   return (cake, start) => {
-    let complete = start;
+    let day = start;
     let remaining = leadTime(cake);
     while (remaining) {
-      complete = nextDay(complete);
-      if (isWorkingDay(complete)) remaining--;
+      day = nextDay(day);
+      if (isWorkingDay(day)) remaining--;
     }
-    return complete;
+    return day;
   };
 }
 
