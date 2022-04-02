@@ -16,9 +16,6 @@ const nextDay = (d: PlainDateTime) => d.add({ days: 1 });
 
 const isMorning = (d: PlainDateTime) => d.hour < 12;
 
-const isWeekend = (d: PlainDateTime) =>
-  [SATURDAY, SUNDAY].includes(d.dayOfWeek);
-
 const isFrostingDay = (d: PlainDateTime) =>
   ![SUNDAY, MONDAY].includes(d.dayOfWeek);
 const isBakingDay = (d: PlainDateTime) =>
