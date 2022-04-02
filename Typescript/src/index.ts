@@ -49,10 +49,15 @@ function doIt(
   };
 }
 
-function moveAfterXmas(process: Process): Process {
-  return (order, orderTime) => {
-    const plannedDate = process(order, orderTime);
-    if (!isFestivePeriod(plannedDate)) return plannedDate;
+function startBaking(process: Process) {
+  return (order: CakeRequirements, orderTime: PlainDateTime) => {
+    const startDay = isMorning(orderTime)
+      ? orderTime.toPlainDate()
+      : nextDay(orderTime.toPlainDate());
+
+    const plannedCompletionDate = process(order, startDay);
+
+    if (!isFestivePeriod(plannedCompletionDate)) return plannedCompletionDate;
 
     const startDate = NEW_YEAR_OPENING.toPlainDate({
       year: orderTime.year + 1,
@@ -85,8 +90,7 @@ export function orderCake(
   orderTime: PlainDateTime
 ): PlainDate {
   const orderDay = orderTime.toPlainDate();
-  const startDay = isMorning(orderTime) ? orderDay : nextDay(orderDay);
-  const makeIt = moveAfterXmas(combine(bakeIt, frostIt, addNuts));
+  const makeIt = startBaking(combine(bakeIt, frostIt, addNuts));
 
-  return latest(makeIt(order, startDay), boxIt(order, orderDay));
+  return latest(makeIt(order, orderTime), boxIt(order, orderDay));
 }
