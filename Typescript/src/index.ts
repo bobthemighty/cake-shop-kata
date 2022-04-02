@@ -57,9 +57,7 @@ function doIt(
 
 function startBaking(process: Process) {
   return (order: CakeRequirements, orderTime: PlainDateTime) => {
-    const startDay = isMorning(orderTime) ? orderTime : nextDay(orderTime);
-
-    const plannedCompletionDate = process(order, startDay);
+    const plannedCompletionDate = process(order, orderTime);
 
     if (!isFestivePeriod(plannedCompletionDate)) return plannedCompletionDate;
 
@@ -82,7 +80,7 @@ const frostIt = doIt(
 );
 
 const waitForBakingDay: Process = (c, d) => {
-  let start = d;
+  let start = isMorning(d) ? d : nextDay(d);
   while (!isBakingDay(start)) start = nextDay(start);
   return start;
 };
