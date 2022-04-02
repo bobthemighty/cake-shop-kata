@@ -23,9 +23,9 @@ The baker only works Monday-Friday.
   * An order for a small cake with frosting received on Friday morning has a delivery date of Wednesday
   
 The froster works Tuesday-Saturday.
-  * An order for a big cake with custom frosting received on Tuesday afternoon has a delivery date of Wednesday
+  * An order for a big cake with custom frosting received on Tuesday afternoon has a delivery date of next Tuesday
   
-Fancy boxes have a lead time of 3 days. Boxes can be ordered before cakes are baked.
+Fancy boxes have a lead time of 3 days. Boxes can be ordered before cakes are baked. The lead time for boxes always begins on the following day.
   * An order for a small cake with a fancy box, placed on Monday morning, has a delivery date of Wednesday
   * An order for a big cake with a fancy box, placed on Monday morning, has a delivery date of Wednesday
   * An order for a big cake with a fancy box, placed on Monday afternoon, has a delivery date of Thursday
