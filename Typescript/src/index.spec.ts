@@ -11,6 +11,7 @@ const Tuesday = Monday.add({ days: 1 });
 const Wednesday = Monday.add({ days: 2 });
 const Thursday = Monday.add({ days: 3 });
 const Friday = Monday.add({ days: 4 });
+const Saturday = Monday.add({ days: 5 });
 
 test("A small cake, ordered on Monday, is delivered on Wednesday", () => {
   const result = orderCake({ size: "small" }, afternoon(Monday));
@@ -20,6 +21,11 @@ test("A small cake, ordered on Monday, is delivered on Wednesday", () => {
 test("A big cake, ordered on Monday, is delivered on Thursday", () => {
   const result = orderCake({ size: "big" }, afternoon(Monday));
   expect(result).toBeDeliveredOn(Thursday);
+});
+
+xtest("A small cake ordered on Saturday is delivered on Tuesday", () => {
+  const result = orderCake({ size: "small" }, morning(Saturday));
+  expect(result).toBeDeliveredOn(following(Tuesday));
 });
 
 test("A cake order received in the morning starts baking the same day", () => {
@@ -115,6 +121,15 @@ test("A small cake with a fancy box, ordered on the 22nd of December has a deliv
 test("A small cake ordered on the morning of the 21st of December has a delivery date of 22nd December (2 days lead time, from the 21st December)", () => {
   const orderDate = PlainDate.from("2022-12-21");
   const deliveryDate = PlainDate.from("2022-12-22");
+
+  expect(orderCake({ size: "small" }, morning(orderDate))).toBeDeliveredOn(
+    deliveryDate
+  );
+});
+
+xtest("A small cake ordered on 22nd December 2021 has a delivery date of 4th Jan (2nd Jan is a Sunday)", () => {
+  const orderDate = PlainDate.from("2021-12-22");
+  const deliveryDate = PlainDate.from("2022-01-04");
 
   expect(orderCake({ size: "small" }, morning(orderDate))).toBeDeliveredOn(
     deliveryDate
