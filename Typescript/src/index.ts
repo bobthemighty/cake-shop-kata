@@ -22,6 +22,8 @@ export interface CakeRequirements {
   with?: Array<Extra>;
 }
 
+type Process = (order: CakeRequirements, startDate: PlainDate) => PlainDate;
+
 const nextDay = (d: PlainDate) => d.add({ days: 1 });
 
 const isMorning = (d: PlainDateTime) => d.hour < 12;
@@ -61,9 +63,21 @@ const addNuts = doIt((c) => (c.with?.includes("nuts") ? 1 : 0), isBakingDay);
 const latest = (...args: Array<PlainDate>) =>
   args.sort(PlainDate.compare).pop();
 
-function combine(...args: Array<typeof bakeIt>): ReturnType<typeof doIt> {
+function combine(...args: Array<Process>): Process {
   return (c: CakeRequirements, start: PlainDate) =>
     args.reduce((acc, cur) => cur(c, acc), start);
+}
+
+function moveAfterXmas(process: Process): Process {
+  return (order, orderTime) => {
+    const plannedDate = process(order, orderTime);
+    if (!isFestivePeriod(plannedDate)) return plannedDate;
+
+    const startDate = NEW_YEAR_OPENING.toPlainDate({
+      year: orderTime.year + 1,
+    });
+    return process(order, startDate);
+  };
 }
 
 export function orderCake(
@@ -72,15 +86,7 @@ export function orderCake(
 ): PlainDate {
   const orderDay = orderTime.toPlainDate();
   const startDay = isMorning(orderTime) ? orderDay : nextDay(orderDay);
-  const makeIt = combine(bakeIt, frostIt, addNuts);
+  const makeIt = moveAfterXmas(combine(bakeIt, frostIt, addNuts));
 
-  const plannedDate = latest(makeIt(order, startDay), boxIt(order, orderDay));
-  if (isFestivePeriod(plannedDate))
-    return orderCake(
-      order,
-      NEW_YEAR_OPENING.toPlainDate({
-        year: 1 + orderDay.year,
-      }).toPlainDateTime()
-    );
-  return plannedDate;
+  return latest(makeIt(order, startDay), boxIt(order, orderDay));
 }
