@@ -51,14 +51,18 @@ const addNuts = doIt((c) => (c.with?.includes("nuts") ? 1 : 0), isBakingDay);
 const latest = (...args: Array<PlainDate>) =>
   args.sort(PlainDate.compare).pop();
 
+function combine(...args: Array<typeof bakeIt>): ReturnType<typeof doIt> {
+  return (c: CakeRequirements, start: PlainDate) =>
+    args.reduce((acc, cur) => cur(c, acc), start);
+}
+
 export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
   const orderDay = orderTime.toPlainDate();
   const startDay = isMorning(orderTime) ? orderDay : nextDay(orderDay);
-  const bakedDate = addNuts(order, frostIt(order, bakeIt(order, startDay)));
-  const boxArrival = boxIt(order, orderDay);
+  const makeIt = combine(bakeIt, frostIt, addNuts);
 
-  return latest(bakedDate, boxArrival);
+  return latest(makeIt(order, startDay), boxIt(order, orderDay));
 }
