@@ -10,7 +10,7 @@ const MONDAY = 1;
 const NEW_YEAR_OPENING = new PlainMonthDay(1, 2);
 const XMAS_CLOSING = new PlainMonthDay(12, 22);
 
-function isFestivePeriod(d: PlainDate) {
+function isFestivePeriod(d: PlainDateTime) {
   return (
     (XMAS_CLOSING.monthCode === d.monthCode && XMAS_CLOSING.day < d.day) ||
     (NEW_YEAR_OPENING.monthCode === d.monthCode && NEW_YEAR_OPENING.day > d.day)
@@ -22,22 +22,28 @@ export interface CakeRequirements {
   with?: Array<Extra>;
 }
 
-type Process = (order: CakeRequirements, startDate: PlainDate) => PlainDate;
+type Process = (
+  order: CakeRequirements,
+  startDate: PlainDateTime
+) => PlainDateTime;
 
-const nextDay = (d: PlainDate) => d.add({ days: 1 });
+const nextDay = (d: PlainDateTime) =>
+  d.add({ days: 1 }).with({ hour: 0, minute: 0 });
 
 const isMorning = (d: PlainDateTime) => d.hour < 12;
 
-const isFrostingDay = (d: PlainDate) => ![SUNDAY, MONDAY].includes(d.dayOfWeek);
+const isFrostingDay = (d: PlainDateTime) =>
+  ![SUNDAY, MONDAY].includes(d.dayOfWeek);
 
-const isBakingDay = (d: PlainDate) => ![SATURDAY, SUNDAY].includes(d.dayOfWeek);
+const isBakingDay = (d: PlainDateTime) =>
+  ![SATURDAY, SUNDAY].includes(d.dayOfWeek);
 
 const everyDay = () => true;
 
 function doIt(
   leadTime: (c: CakeRequirements) => number,
-  isWorkingDay: (d: PlainDate) => boolean
-): (cake: CakeRequirements, start: PlainDate) => PlainDate {
+  isWorkingDay: (d: PlainDateTime) => boolean
+): Process {
   return (cake, start) => {
     let day = start;
     let remaining = leadTime(cake);
@@ -51,15 +57,15 @@ function doIt(
 
 function startBaking(process: Process) {
   return (order: CakeRequirements, orderTime: PlainDateTime) => {
-    const startDay = isMorning(orderTime)
-      ? orderTime.toPlainDate()
-      : nextDay(orderTime.toPlainDate());
+    const startDay = isMorning(orderTime) ? orderTime : nextDay(orderTime);
 
     const plannedCompletionDate = process(order, startDay);
 
     if (!isFestivePeriod(plannedCompletionDate)) return plannedCompletionDate;
 
-    const startDate = NEW_YEAR_OPENING.toPlainDate({
+    const startDate = PlainDateTime.from({
+      monthCode: NEW_YEAR_OPENING.monthCode,
+      day: NEW_YEAR_OPENING.day,
       year: orderTime.year + 1,
     });
     return process(order, startDate);
@@ -77,11 +83,11 @@ const frostIt = doIt(
 
 const addNuts = doIt((c) => (c.with?.includes("nuts") ? 1 : 0), isBakingDay);
 
-const latest = (...args: Array<PlainDate>) =>
+const latest = (...args: Array<PlainDateTime>) =>
   args.sort(PlainDate.compare).pop();
 
 function combine(...args: Array<Process>): Process {
-  return (c: CakeRequirements, start: PlainDate) =>
+  return (c: CakeRequirements, start: PlainDateTime) =>
     args.reduce((acc, cur) => cur(c, acc), start);
 }
 
@@ -89,8 +95,10 @@ export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
-  const orderDay = orderTime.toPlainDate();
   const makeIt = startBaking(combine(bakeIt, frostIt, addNuts));
 
-  return latest(makeIt(order, orderTime), boxIt(order, orderDay));
+  return latest(
+    makeIt(order, orderTime),
+    boxIt(order, orderTime)
+  ).toPlainDate();
 }
