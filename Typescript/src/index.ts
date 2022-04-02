@@ -12,22 +12,20 @@ export interface CakeRequirements {
   with?: Array<Extra>;
 }
 
-const nextDay = (d: PlainDateTime) => d.add({ days: 1 });
+const nextDay = (d: PlainDate) => d.add({ days: 1 });
 
 const isMorning = (d: PlainDateTime) => d.hour < 12;
 
-const isFrostingDay = (d: PlainDateTime) =>
-  ![SUNDAY, MONDAY].includes(d.dayOfWeek);
+const isFrostingDay = (d: PlainDate) => ![SUNDAY, MONDAY].includes(d.dayOfWeek);
 
-const isBakingDay = (d: PlainDateTime) =>
-  ![SATURDAY, SUNDAY].includes(d.dayOfWeek);
+const isBakingDay = (d: PlainDate) => ![SATURDAY, SUNDAY].includes(d.dayOfWeek);
 
 const everyDay = () => true;
 
 function doIt(
   leadTime: (c: CakeRequirements) => number,
-  isWorkingDay: (d: PlainDateTime) => boolean
-): (cake: CakeRequirements, start: PlainDateTime) => PlainDateTime {
+  isWorkingDay: (d: PlainDate) => boolean
+): (cake: CakeRequirements, start: PlainDate) => PlainDate {
   return (cake, start) => {
     let day = start;
     let remaining = leadTime(cake);
@@ -50,17 +48,17 @@ const frostIt = doIt(
 
 const addNuts = doIt((c) => (c.with?.includes("nuts") ? 1 : 0), isBakingDay);
 
+const latest = (...args: Array<PlainDate>) =>
+  args.sort(PlainDate.compare).pop();
+
 export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
-  const startDay = isMorning(orderTime) ? orderTime : nextDay(orderTime);
-  const bakedDate = addNuts(
-    order,
-    frostIt(order, bakeIt(order, startDay))
-  ).toPlainDate();
-  const boxArrival = boxIt(order, orderTime).toPlainDate();
+  const orderDay = orderTime.toPlainDate();
+  const startDay = isMorning(orderTime) ? orderDay : nextDay(orderDay);
+  const bakedDate = addNuts(order, frostIt(order, bakeIt(order, startDay)));
+  const boxArrival = boxIt(order, orderDay);
 
-  if (PlainDateTime.compare(bakedDate, boxArrival) == -1) return boxArrival;
-  return bakedDate;
+  return latest(bakedDate, boxArrival);
 }
