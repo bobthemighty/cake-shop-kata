@@ -3,12 +3,18 @@ import { PlainDate, PlainDateTime } from "temporal-polyfill";
 type Size = "small" | "big";
 type Extra = "frosting";
 
+const SATURDAY = 6;
+const SUNDAY = 7;
+
 export interface CakeRequirements {
   size: Size;
   with?: Array<Extra>;
 }
 
 const isMorning = (d: PlainDateTime) => d.hour < 12;
+
+const isWeekend = (d: PlainDateTime) =>
+  [SATURDAY, SUNDAY].includes(d.dayOfWeek);
 
 export function orderCake(
   order: CakeRequirements,
@@ -19,5 +25,9 @@ export function orderCake(
   const startDay = isMorning(orderTime)
     ? orderTime
     : orderTime.add({ days: 1 });
-  return startDay.add({ days: leadTime }).toPlainDate();
+
+  let deliveryDay = startDay.add({ days: leadTime });
+  while (isWeekend(deliveryDay)) deliveryDay = deliveryDay.add({ days: 1 });
+
+  return deliveryDay.toPlainDate();
 }
