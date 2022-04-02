@@ -1,6 +1,6 @@
 # Connascent Cakes
 
-Connascent Cakes is an artisan baker that sells custom-made cakes for delivery. Two friends, Sandro and Marco own the shop.
+Connascent Cakes is an artisan cake shop that sells custom-made cakes for delivery. Two friends, Sandro and Marco, own the shop.
 
 Sandro and Marco want to start selling cakes online and need you to write code that can calculate the delivery date for their cakes.
 
