@@ -2,8 +2,8 @@ import { PlainDate, PlainDateTime } from "temporal-polyfill";
 
 import { orderCake } from ".";
 
-const morning = (d: PlainDate) => d.toPlainDateTime().with({ hour: 9 });
-const afternoon = (d: PlainDate) => d.toPlainDateTime().with({ hour: 14 });
+const morning = (d: PlainDate) => d.toPlainDateTime({ hour: 9 });
+const afternoon = (d: PlainDate) => d.toPlainDateTime({ hour: 14 });
 
 const Monday = PlainDate.from("2022-04-04");
 const Wednesday = Monday.add({ days: 2 });
