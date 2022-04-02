@@ -81,6 +81,12 @@ const frostIt = doIt(
   isFrostingDay
 );
 
+const waitForBakingDay: Process = (c, d) => {
+  let start = d;
+  while (!isBakingDay(start)) start = nextDay(start);
+  return start;
+};
+
 const addNuts = doIt((c) => (c.with?.includes("nuts") ? 1 : 0), isBakingDay);
 
 const latest = (...args: Array<PlainDateTime>) =>
@@ -95,7 +101,9 @@ export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
-  const makeIt = startBaking(combine(bakeIt, frostIt, addNuts));
+  const makeIt = startBaking(
+    combine(waitForBakingDay, bakeIt, frostIt, addNuts)
+  );
 
   return latest(
     makeIt(order, orderTime),
