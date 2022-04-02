@@ -102,3 +102,21 @@ test("A small cake ordered on the 22nd of December has a delivery date of 3rd Ja
 
   expect(orderCake({ size: "small" }, orderDate)).toBeDeliveredOn(deliveryDate);
 });
+
+test("A small cake with a fancy box, ordered on the 22nd of December has a delivery date of 3rd Jan", () => {
+  const orderDate = PlainDateTime.from("2022-12-22");
+  const deliveryDate = PlainDate.from("2023-01-03");
+
+  expect(
+    orderCake({ size: "small", with: ["box"] }, orderDate)
+  ).toBeDeliveredOn(deliveryDate);
+});
+
+test("A small cake ordered on the morning of the 21st of December has a delivery date of 22nd December (2 days lead time, from the 21st December)", () => {
+  const orderDate = PlainDate.from("2022-12-21");
+  const deliveryDate = PlainDate.from("2022-12-22");
+
+  expect(orderCake({ size: "small" }, morning(orderDate))).toBeDeliveredOn(
+    deliveryDate
+  );
+});

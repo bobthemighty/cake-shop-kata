@@ -12,7 +12,7 @@ const XMAS_CLOSING = new PlainMonthDay(12, 22);
 
 function isFestivePeriod(d: PlainDate) {
   return (
-    (XMAS_CLOSING.monthCode === d.monthCode && XMAS_CLOSING.day <= d.day) ||
+    (XMAS_CLOSING.monthCode === d.monthCode && XMAS_CLOSING.day < d.day) ||
     (NEW_YEAR_OPENING.monthCode === d.monthCode && NEW_YEAR_OPENING.day > d.day)
   );
 }
@@ -49,6 +49,18 @@ function doIt(
   };
 }
 
+function moveAfterXmas(process: Process): Process {
+  return (order, orderTime) => {
+    const plannedDate = process(order, orderTime);
+    if (!isFestivePeriod(plannedDate)) return plannedDate;
+
+    const startDate = NEW_YEAR_OPENING.toPlainDate({
+      year: orderTime.year + 1,
+    });
+    return process(order, startDate);
+  };
+}
+
 const boxIt = doIt((c) => (c.with?.includes("box") ? 2 : 0), everyDay);
 
 const bakeIt = doIt((c) => (c.size === "small" ? 1 : 2), isBakingDay);
@@ -66,18 +78,6 @@ const latest = (...args: Array<PlainDate>) =>
 function combine(...args: Array<Process>): Process {
   return (c: CakeRequirements, start: PlainDate) =>
     args.reduce((acc, cur) => cur(c, acc), start);
-}
-
-function moveAfterXmas(process: Process): Process {
-  return (order, orderTime) => {
-    const plannedDate = process(order, orderTime);
-    if (!isFestivePeriod(plannedDate)) return plannedDate;
-
-    const startDate = NEW_YEAR_OPENING.toPlainDate({
-      year: orderTime.year + 1,
-    });
-    return process(order, startDate);
-  };
 }
 
 export function orderCake(
