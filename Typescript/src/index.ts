@@ -1,4 +1,4 @@
-import { PlainDate, PlainDateTime } from "temporal-polyfill";
+import { PlainDate, PlainDateTime, PlainMonthDay } from "temporal-polyfill";
 
 type Size = "small" | "big";
 type Extra = "frosting" | "nuts" | "box";
@@ -6,6 +6,16 @@ type Extra = "frosting" | "nuts" | "box";
 const SATURDAY = 6;
 const SUNDAY = 7;
 const MONDAY = 1;
+
+const NEW_YEAR_OPENING = new PlainMonthDay(1, 2);
+const XMAS_CLOSING = new PlainMonthDay(12, 22);
+
+function isFestivePeriod(d: PlainDate) {
+  return (
+    (XMAS_CLOSING.monthCode === d.monthCode && XMAS_CLOSING.day <= d.day) ||
+    (NEW_YEAR_OPENING.monthCode === d.monthCode && NEW_YEAR_OPENING.day > d.day)
+  );
+}
 
 export interface CakeRequirements {
   size: Size;
@@ -64,5 +74,13 @@ export function orderCake(
   const startDay = isMorning(orderTime) ? orderDay : nextDay(orderDay);
   const makeIt = combine(bakeIt, frostIt, addNuts);
 
-  return latest(makeIt(order, startDay), boxIt(order, orderDay));
+  const plannedDate = latest(makeIt(order, startDay), boxIt(order, orderDay));
+  if (isFestivePeriod(plannedDate))
+    return orderCake(
+      order,
+      NEW_YEAR_OPENING.toPlainDate({
+        year: 1 + orderDay.year,
+      }).toPlainDateTime()
+    );
+  return plannedDate;
 }

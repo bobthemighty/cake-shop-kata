@@ -95,3 +95,10 @@ test("An order for a small cake with a fancy box, placed on Monday morning, has 
     orderCake({ size: "small", with: ["box"] }, morning(Monday))
   ).toBeDeliveredOn(Wednesday);
 });
+
+test("A small cake ordered on the 22nd of December has a delivery date of 3rd Jan", () => {
+  const orderDate = PlainDateTime.from("2022-12-22");
+  const deliveryDate = PlainDate.from("2023-01-03");
+
+  expect(orderCake({ size: "small" }, orderDate)).toBeDeliveredOn(deliveryDate);
+});
