@@ -1,7 +1,5 @@
-import { PlainDateTime } from "temporal-polyfill";
-
 type Size = "small" | "big";
 
-export function order(size: Size, date: PlainDateTime) {
+export function order(size: Size) {
   throw new Error("Not implemented");
 }
