@@ -55,7 +55,7 @@ function doIt(
   };
 }
 
-function startBaking(process: Process) {
+function closeForChristmas(process: Process): Process {
   return (order: CakeRequirements, orderTime: PlainDateTime) => {
     const plannedCompletionDate = process(order, orderTime);
 
@@ -99,7 +99,7 @@ export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
-  const makeIt = startBaking(
+  const makeIt = closeForChristmas(
     combine(waitForBakingDay, bakeIt, frostIt, addNuts)
   );
 
