@@ -1,7 +1,7 @@
 import { PlainDate, PlainDateTime } from "temporal-polyfill";
 
 type Size = "small" | "big";
-type Extra = "frosting" | "nuts";
+type Extra = "frosting" | "nuts" | "box";
 
 const SATURDAY = 6;
 const SUNDAY = 7;
