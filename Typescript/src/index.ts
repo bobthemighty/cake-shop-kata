@@ -1,7 +1,7 @@
 import { PlainDate, PlainDateTime } from "temporal-polyfill";
 
 type Size = "small" | "big";
-type Extra = "frosting";
+type Extra = "frosting" | "nuts";
 
 const SATURDAY = 6;
 const SUNDAY = 7;
@@ -43,11 +43,13 @@ const frostIt = doIt(
   isFrostingDay
 );
 
+const addNuts = doIt((c) => (c.with?.includes("nuts") ? 1 : 0), isBakingDay);
+
 export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
   const startDay = isMorning(orderTime) ? orderTime : nextDay(orderTime);
 
-  return frostIt(order, bakeIt(order, startDay)).toPlainDate();
+  return addNuts(order, frostIt(order, bakeIt(order, startDay))).toPlainDate();
 }
