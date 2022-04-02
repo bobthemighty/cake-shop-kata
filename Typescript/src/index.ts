@@ -24,28 +24,27 @@ const isFrostingDay = (d: PlainDateTime) =>
 const isBakingDay = (d: PlainDateTime) =>
   ![SATURDAY, SUNDAY].includes(d.dayOfWeek);
 
-function bakeIt(size: Size, start: PlainDateTime) {
-  let complete = start;
-  let leadTime = size === "small" ? 1 : 2;
-  while (leadTime > 0) {
-    complete = nextDay(complete);
-    if (isBakingDay(complete)) leadTime--;
-  }
-  return complete;
+function doIt(
+  leadTime: (c: CakeRequirements) => number,
+  isWorkingDay: (d: PlainDateTime) => boolean
+): (cake: CakeRequirements, start: PlainDateTime) => PlainDateTime {
+  return (cake, start) => {
+    let complete = start;
+    let remaining = leadTime(cake);
+    while (remaining) {
+      complete = nextDay(complete);
+      if (isWorkingDay(complete)) remaining--;
+    }
+    return complete;
+  };
 }
 
-function frostIt(extras: Array<Extra> | undefined, start: PlainDateTime) {
-  if (!extras?.includes("frosting")) return start;
-  let leadTime = 2;
+const bakeIt = doIt((c) => (c.size === "small" ? 1 : 2), isBakingDay);
 
-  let complete = start;
-  while (leadTime > 0) {
-    complete = nextDay(complete);
-    if (isFrostingDay(complete)) leadTime--;
-  }
-
-  return complete;
-}
+const frostIt = doIt(
+  (c) => (c.with?.includes("frosting") ? 2 : 0),
+  isFrostingDay
+);
 
 export function orderCake(
   order: CakeRequirements,
@@ -53,5 +52,5 @@ export function orderCake(
 ): PlainDate {
   const startDay = isMorning(orderTime) ? orderTime : nextDay(orderTime);
 
-  return frostIt(order.with, bakeIt(order.size, startDay)).toPlainDate();
+  return frostIt(order, bakeIt(order, startDay)).toPlainDate();
 }
