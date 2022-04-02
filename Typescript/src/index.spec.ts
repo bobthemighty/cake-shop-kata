@@ -127,7 +127,7 @@ test("A small cake ordered on the morning of the 21st of December has a delivery
   );
 });
 
-xtest("A small cake ordered on 22nd December 2021 has a delivery date of 4th Jan (2nd Jan is a Sunday)", () => {
+test("A small cake ordered on 22nd December 2021 has a delivery date of 4th Jan (2nd Jan is a Sunday)", () => {
   const orderDate = PlainDate.from("2021-12-22");
   const deliveryDate = PlainDate.from("2022-01-04");
 
