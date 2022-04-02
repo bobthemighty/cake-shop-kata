@@ -1,5 +1,7 @@
+import { PlainDateTime } from "temporal-polyfill";
+
 type Size = "small" | "big";
 
-export function order(size: Size) {
-  throw new Error("Not implemented");
+export function orderCake(size: Size, orderTime: PlainDateTime) {
+  return orderTime.add({ days: 2 }).toPlainDate();
 }
