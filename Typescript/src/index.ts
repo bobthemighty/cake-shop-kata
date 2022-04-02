@@ -20,11 +20,12 @@ export function orderCake(
   order: CakeRequirements,
   orderTime: PlainDateTime
 ): PlainDate {
-  let leadTime = order.size === "small" ? 1 : 2;
-  if (order.with?.includes("frosting")) leadTime += 2;
   const startDay = isMorning(orderTime)
     ? orderTime
     : orderTime.add({ days: 1 });
+
+  let leadTime = order.size === "small" ? 1 : 2;
+  if (order.with?.includes("frosting")) leadTime += 2;
 
   let deliveryDay = startDay.add({ days: leadTime });
   while (isWeekend(deliveryDay)) deliveryDay = deliveryDay.add({ days: 1 });
