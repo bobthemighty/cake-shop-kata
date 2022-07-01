@@ -61,6 +61,6 @@ Fancy boxes will continue to arrive throughout the festive period.
   * A small cake with fancy box, ordered on the 22nd of December, has a delivery date of 3rd Jan 
     * Marco comes back from holiday on the 2nd of January and bakes the cake
     * The box arrives on the 25th of December
-  * A small cake with a fancy box, ordered on the 21st of December has a delivery date of 3rd January
+  * A small cake with a fancy box, ordered on the morning of the 21st of December has a delivery date of 3rd January
     * Marco could bake the cake on the 21st and 22nd, but the box won't arrive until the 23rd
     * Instead, Marco waits until the 2nd of January before starting the cake
